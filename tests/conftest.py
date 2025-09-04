@@ -1,19 +1,16 @@
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
 @pytest.fixture(scope="function")
 def browser():
-    """
-    Эта фикстура подготавливает и закрывает браузер для каждого теста.
-    scope="function" означает, что фикстура будет выполняться для каждой тестовой функции.
-    """
     print("\nstart browser for test..")
-    
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    
+    # chrome_options.add_argument("--headless") 
+    
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
@@ -21,11 +18,14 @@ def browser():
         service=ChromeService(ChromeDriverManager().install()),
         options=chrome_options
     )
-    # ----------------------------------------------------
-
-    yield driver  # Эта команда передает драйвер в тест
-
-    # --- Этот код выполнится после завершения теста ---
+    
+    driver.set_window_size(1920, 1080)
+    print("Установили размер окна 1920x1080.")
+    
+    driver.execute_script("document.body.style.zoom='75%'")
+    print("Уменьшили масштаб до 75%.")
+    
+    yield driver
+    
     print("\nquit browser..")
     driver.quit()
-
